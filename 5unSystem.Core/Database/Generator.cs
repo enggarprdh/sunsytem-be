@@ -43,6 +43,20 @@ public class GeneratorDB
                 createTableSql = createTableSql.TrimEnd(',') + ")";
                 context.Database.ExecuteSqlRaw(createTableSql);
             }
+            else if (tableExists > 0)
+            {
+                // Optionally, you can check for columns and add them if they don't exist
+                foreach (var property in type.GetProperties())
+                {
+                    var columnName = property.Name;
+                    var columnType = GetSqlType(property.PropertyType);
+                    var columnExists = context.Database.ExecuteSqlRaw($"SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tableName}' AND COLUMN_NAME = '{columnName}'");
+                    if (columnExists == 0)
+                    {
+                        context.Database.ExecuteSqlRaw($"ALTER TABLE {tableName} ADD {columnName} {columnType}");
+                    }
+                }
+            }
         }
 
         SeedInitialData(context);
@@ -101,6 +115,7 @@ public class GeneratorDB
                     UserName = "admin",
                     Password = password,
                     CreatedBy = "System",
+                    Role_RoleID = Guid.Parse("00000000-0000-0000-0000-000000000001"), // Ganti dengan ID Role yang sesuai
                     CreatedAt = DateTime.UtcNow,
                     ModifiedBy = null,
                     ModifiedAt = null,

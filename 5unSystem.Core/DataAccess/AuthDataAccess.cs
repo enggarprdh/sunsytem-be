@@ -1,8 +1,8 @@
 using System;
 using _5unSystem.Model.Entities;
 using _5unSystem.Model.Enum;
-using _5unSystem.Model.Shared;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace _5unSystem.Core.DataAccess;
 
@@ -12,9 +12,16 @@ public class AuthDataAccess
     {
         using (var db = new DataContext())
         {
-            var user = db.Users.FirstOrDefault(x => x.UserName == data.UserName);
+            var sql = $@"SELECT * FROM {User.TableName} WHERE {User.UserNameField} = @UserName 
+                        AND {User.DeletedField} = 0";
+            var user = db.Users.FromSqlRaw(sql, new SqlParameter
+            {
+                ParameterName = "@UserName",
+                Value = data.UserName ?? string.Empty
+            }).FirstOrDefault(); // Fix: Correct syntax for method chaining
+
             if (user == null)
-                throw new Exception(ResponseLoginMessage.USER_NOT_FOUND);
+                throw new Exception(ResponseLoginMessage.INVALID_CREDENTIALS);
 
             if (user.Password != data.Password)
                 throw new Exception(ResponseLoginMessage.INVALID_CREDENTIALS);
@@ -22,5 +29,4 @@ public class AuthDataAccess
             return user;
         }
     }
-
 }
