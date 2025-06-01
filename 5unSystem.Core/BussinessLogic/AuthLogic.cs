@@ -29,7 +29,7 @@ public class AuthLogic
             param.UserName = userName;
             param.Password = password.HashString();
 
-            var user = AuthDataAccess.Login(param);
+            response = AuthDataAccess.Login(param);
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
@@ -42,11 +42,8 @@ public class AuthLogic
             var audience = configuration["Jwt:Audience"];
             var issuer = configuration["Jwt:Issuer"];
 
-            var Token = GenerateJwtToken(user, key, expires, audience, issuer);
-            var RefreshToken = GenerateRefreshToken(user, key, refreshTokenExpires, audience, issuer);
-
-            response.Token = Token;
-            response.RefreshToken = RefreshToken;
+            GenerateJwtToken(response, key, expires, audience, issuer);
+            GenerateRefreshToken(response, key, refreshTokenExpires, audience, issuer);
 
             return response;
         }
@@ -55,7 +52,7 @@ public class AuthLogic
             throw new Exception(ex.Message);
         }
     }
-    private static string GenerateJwtToken(User user, string key, DateTime expires, string audience, string issuer)
+    private static void GenerateJwtToken(LoginResponse response, string key, DateTime expires, string audience, string issuer)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenKey = Encoding.ASCII.GetBytes(key);
@@ -63,7 +60,7 @@ public class AuthLogic
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, response.UserName)
             }),
             Expires = expires,
             Audience = audience,
@@ -71,9 +68,9 @@ public class AuthLogic
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        response.Token = tokenHandler.WriteToken(token);
     }
-    private static string GenerateRefreshToken(User user, string key, DateTime expires, string audience, string issuer)
+    private static void GenerateRefreshToken(LoginResponse response, string key, DateTime expires, string audience, string issuer)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenKey = Encoding.ASCII.GetBytes(key);
@@ -81,7 +78,7 @@ public class AuthLogic
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Name, response.UserName),
                 new Claim("RefreshToken", "true")
             }),
             Expires = expires,
@@ -90,6 +87,6 @@ public class AuthLogic
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        response.RefreshToken = tokenHandler.WriteToken(token);
     }
 }

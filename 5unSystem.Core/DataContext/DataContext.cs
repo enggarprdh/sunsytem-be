@@ -23,12 +23,17 @@ namespace _5unSystem.Core
                    .Build();
                 var connectionString = configuration.GetConnectionString("Main");
                 optionsBuilder.UseSqlServer(connectionString);
+
+                
                 
             }
+
+
         }
 
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Role { get; set; }
 
     }
 

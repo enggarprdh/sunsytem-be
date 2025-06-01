@@ -28,7 +28,8 @@ public class GeneratorDB
 
         foreach (var type in modelTypes)
         {
-            var tableName = type.Name;
+            var classObj = type.Name;
+            var tableName = type.GetField("TableName")?.GetValue(null)?.ToString() ?? classObj;
             var tableExists = context.Database.ExecuteSqlRaw($"SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tableName}'");
             if (tableExists == 0)
             {
@@ -106,6 +107,23 @@ public class GeneratorDB
         if (!context.Users.Any())
         {
             // var encrypt = new Encrypt();
+            var roleID = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var initialRoles = new List<Role>
+            {
+                new Role
+                {
+                    RoleID = roleID, // Ganti dengan ID Role yang sesuai
+                    RoleName = "System Admin",
+                    CreatedBy = "System",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedBy = null,
+                    ModifiedAt = null,
+                    Deleted = false
+                }
+            };
+
+            context.Role.AddRange(initialRoles);
+            
             var initialUsers = new List<User>();
             var password = "admin123";
             password = password.HashString();// Menggunakan fungsi HashPassword untuk meng-hash password
@@ -115,7 +133,7 @@ public class GeneratorDB
                     UserName = "admin",
                     Password = password,
                     CreatedBy = "System",
-                    Role_RoleID = Guid.Parse("00000000-0000-0000-0000-000000000001"), // Ganti dengan ID Role yang sesuai
+                    Role_RoleID = roleID, // Ganti dengan ID Role yang sesuai
                     CreatedAt = DateTime.UtcNow,
                     ModifiedBy = null,
                     ModifiedAt = null,
