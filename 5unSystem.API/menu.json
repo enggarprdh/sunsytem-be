@@ -1,0 +1,30 @@
+[
+  {
+    "menuID": "dashboard",
+    "displayName": "Dashboard",
+    "path": "/dashboard",
+    "isHasSubMenu": false
+  },
+  {
+    "menuID": "users",
+    "displayName": "Users",
+    "isHasSubMenu": true,
+    "subMenu": [
+      {
+        "menuID": "users.Users",
+        "displayName": "Users",
+        "path": "/users"
+      },
+      {
+        "menuID": "users.Roles",
+        "displayName": "Roles",
+        "path": "/roles"
+      },
+      {
+        "menuID": "users.RolePrivileges",
+        "displayName": "Role Privileges",
+        "path": "/roleprivileges"
+      }
+    ]
+  }
+]

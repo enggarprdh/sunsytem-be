@@ -6,6 +6,7 @@ namespace _5unSystem.Model.Entities
     {
         public const string TableName = "Users";    
         public const string UserNameField = "UserName";
+        public const string DisplayNameField = "DisplayName";
         public const string PasswordField = "Password";
         public const string CreatedByField = "CreatedBy";
         public const string CreatedAtField = "CreatedAt";
@@ -17,10 +18,11 @@ namespace _5unSystem.Model.Entities
         [Key]
         public string? UserName { get; set; }
         public string? Password { get; set; }
+        public string? DisplayName { get; set; }
         public Guid? Role_RoleID { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string? ModifiedBy { get; set; }
+        public string? ModifiedBy { get; set;   }
         public DateTime? ModifiedAt { get; set; }
         public bool Deleted { get; set; }
     }
