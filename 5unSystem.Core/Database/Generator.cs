@@ -9,12 +9,21 @@ namespace _5unSystem.Core;
 
 public class GeneratorDB
 {
+    private Guid SYSTEM_ADMIN_ROLE_ID = Guid.Parse("00000000-0000-0000-0000-000000000001");
+    private const string SYSTEM_ADMIN_ROLE_NAME = "System Admin";
+    private const string SYSTEM_ADMIN_USER_NAME = "admin";
+    private const string SYSTEM_ADMIN_USER_PASSWORD = "admin123"; // Default password for the admin user
+    private const string GENERATED_BY = "System";
+
     public void EnsureDatabaseCreated()
     {
         using (var context = new DataContext())
         {
             context.Database.EnsureCreated();
             CreateTablesIfNotExist(context);
+            SeedInitialData(context);
+            SeedMenu(context);
+            SeedRoleMenu(context);
         }
     }
 
@@ -77,8 +86,7 @@ public class GeneratorDB
                 }
             }
         }
-        SeedInitialData(context);
-        SeedMenu(context);
+
 
     }
 
@@ -135,7 +143,7 @@ public class GeneratorDB
             // Cek apakah menu sudah ada berdasarkan MenuID
             var existingMenu = context.Menu.FirstOrDefault(m => m.MenuID == menu.MenuID);
 
-            
+
             var objParent = new Menu();
             if (existingMenu != null)
                 objParent = existingMenu; // Jika menu sudah ada, update data yang ada
@@ -151,14 +159,14 @@ public class GeneratorDB
             if (existingMenu != null)
             {
                 // Update existing menu
-                objParent.ModifiedBy = "System";
+                objParent.ModifiedBy = GENERATED_BY;
                 objParent.ModifiedAt = DateTime.UtcNow;
                 context.Menu.Update(objParent);
             }
             else
             {
                 // Add new menu
-                objParent.CreatedBy = "System";
+                objParent.CreatedBy = GENERATED_BY;
                 objParent.CreatedAt = DateTime.UtcNow;
                 context.Menu.Add(objParent);
             }
@@ -184,18 +192,18 @@ public class GeneratorDB
                     if (existingSubMenu != null)
                     {
                         // Update existing submenu
-                        objSub.ModifiedBy = "System";
+                        objSub.ModifiedBy = GENERATED_BY;
                         objSub.ModifiedAt = DateTime.UtcNow;
                         context.Menu.Update(objSub);
                     }
                     else
                     {
                         // Add new submenu
-                        objSub.CreatedBy = "System";
+                        objSub.CreatedBy = GENERATED_BY;
                         objSub.CreatedAt = DateTime.UtcNow;
                         context.Menu.Add(objSub);
-                    }                    
-                    
+                    }
+
                 }
             }
         }
@@ -213,19 +221,19 @@ public class GeneratorDB
     }
     private void SeedInitialData(DataContext context)
     {
-        
+
 
         if (!context.Users.Any())
         {
             // var encrypt = new Encrypt();
-            var roleID = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var roleID = SYSTEM_ADMIN_ROLE_ID;
             var initialRoles = new List<Role>
             {
                 new Role
                 {
                     RoleID = roleID, // Ganti dengan ID Role yang sesuai
-                    RoleName = "System Admin",
-                    CreatedBy = "System",
+                    RoleName = SYSTEM_ADMIN_ROLE_NAME,
+                    CreatedBy = GENERATED_BY,
                     CreatedAt = DateTime.UtcNow,
                     ModifiedBy = null,
                     ModifiedAt = null,
@@ -236,14 +244,14 @@ public class GeneratorDB
             context.Role.AddRange(initialRoles);
 
             var initialUsers = new List<User>();
-            var password = "admin123";
+            var password = SYSTEM_ADMIN_USER_PASSWORD;
             password = password.HashString();// Menggunakan fungsi HashPassword untuk meng-hash password
 
             initialUsers.Add(new User
             {
-                UserName = "admin",
+                UserName = SYSTEM_ADMIN_USER_NAME,
                 Password = password,
-                CreatedBy = "System",
+                CreatedBy = GENERATED_BY,
                 Role_RoleID = roleID, // Ganti dengan ID Role yang sesuai
                 CreatedAt = DateTime.UtcNow,
                 ModifiedBy = null,
@@ -254,6 +262,80 @@ public class GeneratorDB
             context.Users.AddRange(initialUsers);
             context.SaveChanges();
         }
+    }
+    private void SeedRoleMenu(DataContext context)
+    {
+
+        var menus = context.Menu.ToList();
+        var menuParent = menus.Where(m => m.ParentMenuID == null).ToList();
+        var roleMenuExists = context.RoleMenu.Where(rm => rm.RoleID == SYSTEM_ADMIN_ROLE_ID).ToList();
+        if (roleMenuExists.Count > 0)
+        {
+            context.RemoveRange(roleMenuExists); // Hapus RoleMenu yang sudah ada untuk Role Admin
+        }
+        var roleMenus = new List<RoleMenu>();
+
+        foreach (var parent in menuParent)
+        {
+            var roleMenu = new RoleMenu
+            {
+                ID = Guid.NewGuid(), // Generate a new ID for the RoleMenu
+                RoleID = SYSTEM_ADMIN_ROLE_ID, // Ganti dengan ID Role yang sesuai
+                MenuID = parent.MenuID,
+                isView = true, // Atur sesuai kebutuhan
+                isAdd = true, // Atur sesuai kebutuhan
+                isEdit = true, // Atur sesuai kebutuhan
+                isDelete = true, // Atur sesuai kebutuhan
+                CreatedBy = GENERATED_BY,
+                CreatedAt = DateTime.UtcNow,
+                ModifiedBy = null,
+                ModifiedAt = null,
+                Deleted = false
+            };
+
+            roleMenus.Add(roleMenu);
+            // Cek apakah parent menu memiliki sub-menu
+            if (parent.IsHasSubMenu)
+            {
+                var subMenu = menus.Where(m => m.ParentMenuID == parent.MenuID).ToList();
+                foreach (var sub in subMenu)
+                {
+                    // Cek apakah sub-menu sudah ada dalam RoleMenu
+                    var existingRoleMenu = roleMenus.FirstOrDefault(rm => rm.MenuID == sub.MenuID && rm.RoleID == SYSTEM_ADMIN_ROLE_ID);
+                    if (existingRoleMenu != null)
+                        continue; // Jika sudah ada, lewati penambahan RoleMenu untuk sub-menu
+
+                    var subRoleMenu = new RoleMenu
+                    {
+                        ID = Guid.NewGuid(), // Generate a new ID for the RoleMenu
+                        RoleID = SYSTEM_ADMIN_ROLE_ID, // Ganti dengan ID Role yang sesuai
+                        MenuID = sub.MenuID,
+                        isView = true, // Atur sesuai kebutuhan
+                        isAdd = true, // Atur sesuai kebutuhan
+                        isEdit = true, // Atur sesuai kebutuhan
+                        isDelete = true, // Atur sesuai kebutuhan
+                        CreatedBy = GENERATED_BY,
+                        CreatedAt = DateTime.UtcNow,
+                        ModifiedBy = null,
+                        ModifiedAt = null,
+                        Deleted = false
+                    };
+                    roleMenus.Add(subRoleMenu);
+                }
+            }
+        }
+        context.RoleMenu.AddRange(roleMenus);
+        try
+        {
+            context.SaveChanges();
+        }
+        catch (Exception ex)
+        {
+            // Log the exception or handle it as needed
+            Console.WriteLine($"Error saving role menu data: {ex.Message}");
+        }
+
+
     }
 
 }

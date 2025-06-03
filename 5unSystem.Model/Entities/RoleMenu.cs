@@ -14,8 +14,9 @@ namespace _5unSystem.Model.Entities
         public const string DeletedField = "Deleted";
 
         [Key]
+        public Guid ID { get; set; }
         public Guid RoleID { get; set; }
-        public Guid MenuID { get; set; }
+        public String MenuID { get; set; }
         public bool isView { get; set; }
         public bool isAdd { get; set; }
         public bool isEdit { get; set; }
