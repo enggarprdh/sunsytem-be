@@ -7,6 +7,10 @@ namespace _5unSystem.Model.Entities
         public const string TableName = "RoleMenu";
         public const string RoleIDField = "RoleID";
         public const string MenuIDField = "MenuID";
+        public const string IsViewField = "IsView";
+        public const string IsAddField = "IsAdd";
+        public const string IsEditField = "IsEdit";
+        public const string IsDeleteField = "IsDelete";
         public const string CreatedByField = "CreatedBy";
         public const string CreatedAtField = "CreatedAt";
         public const string ModifiedByField = "ModifiedBy";

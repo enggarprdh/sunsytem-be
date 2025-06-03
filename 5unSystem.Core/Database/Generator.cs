@@ -154,6 +154,8 @@ public class GeneratorDB
             objParent.MenuIcon = menu.Icon;
             objParent.Path = menu.Path;
             objParent.IsHasSubMenu = menu.IsHasSubMenu;
+            objParent.Sequence = menu.Sequence;
+
             objParent.Deleted = false;
 
             if (existingMenu != null)
@@ -188,6 +190,7 @@ public class GeneratorDB
                     objSub.Path = sub.Path;
                     objSub.IsHasSubMenu = false; // Submenu tidak memiliki submenu lagi
                     objSub.Deleted = false;
+                    objSub.Sequence = sub.Sequence;
 
                     if (existingSubMenu != null)
                     {

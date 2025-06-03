@@ -17,6 +17,7 @@ namespace _5unSystem.Model.DTO
         public bool IsAdd { get; set; }
         public bool IsEdit { get; set; }
         public bool IsDelete { get; set; }
+        public int Sequence { get; set; }
         public List<SubMenu> SubMenu { get; set; } = new List<SubMenu>();
     }
 
@@ -29,5 +30,6 @@ namespace _5unSystem.Model.DTO
         public bool IsAdd { get; set; }
         public bool IsEdit { get; set; }
         public bool IsDelete { get; set; }
+        public int Sequence { get; set; }
     }
 }

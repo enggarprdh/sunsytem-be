@@ -29,7 +29,8 @@ public class AuthLogic
             param.UserName = userName;
             param.Password = password.HashString();
 
-            response = AuthDataAccess.Login(param);
+            Guid roleID;
+            response = AuthDataAccess.Login(param, out roleID);
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
@@ -42,6 +43,7 @@ public class AuthLogic
             var audience = configuration["Jwt:Audience"];
             var issuer = configuration["Jwt:Issuer"];
 
+            GetMenu(roleID, response);
             GenerateJwtToken(response, key, expires, audience, issuer);
             GenerateRefreshToken(response, key, refreshTokenExpires, audience, issuer);
 
@@ -88,5 +90,10 @@ public class AuthLogic
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         response.RefreshToken = tokenHandler.WriteToken(token);
+    }
+
+    private static void GetMenu(Guid roleID, LoginResponse loginResult)
+    {
+        loginResult.Menu = AuthDataAccess.GetMenu(roleID);
     }
 }

@@ -3,27 +3,33 @@
     "menuID": "dashboard",
     "displayName": "Dashboard",
     "path": "/dashboard",
-    "isHasSubMenu": false
+    "isHasSubMenu": false,
+    "sequence": 1
   },
   {
     "menuID": "users",
     "displayName": "Users",
     "isHasSubMenu": true,
+    "sequence": 2,
     "subMenu": [
       {
         "menuID": "users.Users",
         "displayName": "Users",
-        "path": "/users"
+        "path": "/users",
+        "sequence": 1
       },
       {
         "menuID": "users.Roles",
         "displayName": "Roles",
-        "path": "/roles"
+        "path": "/roles",
+        "sequence": 2
       },
       {
         "menuID": "users.RolePrivileges",
         "displayName": "Role Privileges",
-        "path": "/roleprivileges"
+        "path": "/roleprivileges",
+        "sequence": 3
+
       }
     ]
   }
