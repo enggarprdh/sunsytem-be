@@ -101,6 +101,10 @@ public class AuthDataAccess
                 foreach (DataRow row in dtMenu.Rows)
                 {
                     var response = new MenuResponse();
+
+                    if (!string.IsNullOrEmpty(row[Menu.ParentMenuIDField].ToString()))
+                        continue;
+
                     response.MenuID = row[Menu.MenuIDField].ToString();
                     response.DisplayName = row[Menu.DisplayNameField].ToString();
                     response.Icon = row[Menu.MenuIconField].ToString();
@@ -138,10 +142,17 @@ public class AuthDataAccess
             }
         }
 
-        //if (result.Count > 0)
-        //{
-        //    result= result.OrderBy(x => x.Sequence).ToList();
-        //}
+        if (result.Count > 0)
+        {
+            result = result.OrderBy(x => x.Sequence).ToList();
+            foreach (var menu in result)
+            {
+                if (menu.SubMenu != null && menu.SubMenu.Count > 0)
+                    menu.SubMenu = menu.SubMenu.OrderBy(x => x.Sequence).ToList();
+                
+            }
+
+        }
 
         return result;
     }
