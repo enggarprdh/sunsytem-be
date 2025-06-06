@@ -2,15 +2,17 @@
   {
     "menuID": "dashboard",
     "displayName": "Dashboard",
-    "path": "/dashboard",
+    "path": "/home",
     "isHasSubMenu": false,
-    "sequence": 1
+    "sequence": 1,
+    "icon": "LayoutDashboard"
   },
   {
     "menuID": "users",
     "displayName": "Users",
     "isHasSubMenu": true,
     "sequence": 2,
+    "icon": "Users",
     "subMenu": [
       {
         "menuID": "users.Users",
