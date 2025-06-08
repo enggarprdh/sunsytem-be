@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using _5unSystem.Core.BussinessLogic;
 using _5unSystem.Model.Shared;
 using _5unSystem.Model.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _5unSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // Tambahkan atribut Authorize untuk mengaktifkan JWT Authorization
     public class RoleController : ControllerBase
     {
         private readonly IConfiguration _configuration;
