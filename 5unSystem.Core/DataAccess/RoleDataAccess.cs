@@ -1,4 +1,6 @@
 ﻿using _5unSystem.Model.DTO;
+using _5unSystem.Model.Entities;
+using _5unSystem.Model.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,21 @@ namespace _5unSystem.Core.DataAccess
             return response;
         }
 
+        public static Boolean FindRoleByName(string roleName)
+        {
+            try
+            {
+                using (var db = new DataContext())
+                {
+                    return db.Role.Any(r => r.RoleName == roleName);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public static Boolean DeleteRole(Guid roleID)
         {
             try
@@ -46,11 +63,28 @@ namespace _5unSystem.Core.DataAccess
                 {
                     var role = db.Role.FirstOrDefault(r => r.RoleID == roleID);
                     if (role == null)
-                        throw new Exception("Role not found");
+                        throw new Exception(RoleResponseMessage.ROLE_NOT_FOUND);
                     role.Deleted = true;
                     db.SaveChanges();
                     return true;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public static Boolean AddRole(Role input)
+        {
+            try
+            {
+                using (var db = new DataContext())
+                {
+                    db.Role.Add(input);
+                    db.SaveChanges();
+                }
+                return true;
             }
             catch (Exception ex)
             {

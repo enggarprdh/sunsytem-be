@@ -5,6 +5,7 @@ namespace _5unSystem.Model.Enum;
 public class ResponseMessage
 {
     public const string SUCCESS = "Success";
+    public const string PAYLOAD_IS_EMPTY = "Payload is empty";
 }
 
 public class ResponseLoginMessage

@@ -4,10 +4,11 @@ using _5unSystem.Core.BussinessLogic;
 using _5unSystem.Model.Shared;
 using _5unSystem.Model.DTO;
 using Microsoft.AspNetCore.Authorization;
+using _5unSystem.Model.Enum;
 
 namespace _5unSystem.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/role")]
     [ApiController]
     [Authorize] // Tambahkan atribut Authorize untuk mengaktifkan JWT Authorization
     public class RoleController : ControllerBase
@@ -64,9 +65,24 @@ namespace _5unSystem.API.Controllers
                 };
                 return BadRequest(result);
             }
+        }
 
-
-
+        [HttpPost]
+        public ActionResult AddRole([FromBody] RoleRequest input)
+        {
+            try
+            {
+                RoleLogic.AddRole(input);
+                return Ok(new Result<string> { Message = RoleResponseMessage.ROLE_CREATED_SUCCESSFULLY });
+            }
+            catch (Exception ex)
+            {
+                var result = new Result<string>
+                {
+                    Message = ex.Message
+                };
+                return BadRequest(result);
+            }
         }
     }
 }

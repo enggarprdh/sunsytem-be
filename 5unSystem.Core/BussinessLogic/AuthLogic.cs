@@ -22,6 +22,7 @@ public class AuthLogic
         var response = new LoginResponse();
         try
         {
+            
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
                 throw new Exception(ResponseLoginMessage.USERNAME_OR_PASSWORD_EMPTY);
 
