@@ -53,8 +53,12 @@ namespace _5unSystem.API.Controllers
                 if (roleId == Guid.Empty)
                     throw new ArgumentException(RoleResponseMessage.ROLE_INVALID_DATA);
                 var response = RoleLogic.GetRoleById(roleId);
-                
-                return Ok(response);
+                var result = new Result<RoleResponse>
+                {
+                    Data = response
+                };
+
+                return Ok(result);
             }
             catch (Exception ex)
             {

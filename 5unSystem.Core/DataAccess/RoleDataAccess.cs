@@ -118,7 +118,8 @@ namespace _5unSystem.Core.DataAccess
             {
                 using (var db = new DataContext())
                 {
-                    db.Role.Update(input);
+                    db.Role.Add(input);
+                    db.Entry(input).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     db.SaveChanges();
                 }
                 return true;

@@ -3,11 +3,6 @@ using _5unSystem.Model.DTO;
 using _5unSystem.Model.Entities;
 using _5unSystem.Model.Enum;
 using _5unSystem.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _5unSystem.Core.BussinessLogic
 {
@@ -106,19 +101,10 @@ namespace _5unSystem.Core.BussinessLogic
                 var existingRole = RoleDataAccess.FindRoleById(roleId);
 
                 existingRole.RoleName = input.RoleName.Trim();
-                existingRole.ModifiedBy = string.Empty; // Assuming you want to set it to a default value, otherwise set it to the current user's ID
+                existingRole.ModifiedBy = UserClaimHelper.UserName();
+                existingRole.ModifiedAt = DateTime.Now;
 
-
-                var role = new Role
-                {
-                    RoleID = Guid.NewGuid(), // Assuming you want to create a new role, otherwise fetch the existing one
-                    RoleName = input.RoleName.Trim(),
-                    ModifiedAt = DateTime.Now,
-                    ModifiedBy = UserClaimHelper.UserName(), // Assuming you want to set the modified by to the current user's name
-                    Deleted = false
-                };
-
-                var isUpdated = RoleDataAccess.UpdateRole(role);
+                var isUpdated = RoleDataAccess.UpdateRole(existingRole);
 
             }
             catch (Exception ex)
