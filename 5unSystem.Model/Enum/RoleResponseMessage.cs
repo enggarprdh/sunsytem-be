@@ -15,5 +15,7 @@ namespace _5unSystem.Model.Enum
         public const string ROLE_UPDATED_SUCCESSFULLY = "Role updated successfully";
         public const string ROLE_DELETED_SUCCESSFULLY = "Role deleted successfully";
         public const string ROLE_ALREADY_EXISTS = "Role already exists";
+        public const string ROLE_ID_EMPTY = "Role ID cannot be empty";
+        public const string ROLE_INVALID_DATA = "Invalid role data";
     }
 }

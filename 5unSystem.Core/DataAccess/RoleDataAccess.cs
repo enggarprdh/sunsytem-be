@@ -55,6 +55,26 @@ namespace _5unSystem.Core.DataAccess
             }
         }
 
+        public static Role FindRoleById(Guid roleID)
+        {
+            var data = new Role();
+            try
+            {
+                using (var db = new DataContext())
+                {
+                    data = db.Role.FirstOrDefault(d => d.RoleID == roleID);
+                    if (data == null)
+                        throw new Exception(RoleResponseMessage.ROLE_NOT_FOUND);
+
+                    return data;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public static Boolean DeleteRole(Guid roleID)
         {
             try
@@ -82,6 +102,23 @@ namespace _5unSystem.Core.DataAccess
                 using (var db = new DataContext())
                 {
                     db.Role.Add(input);
+                    db.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public static Boolean UpdateRole(Role input)
+        {
+            try
+            {
+                using (var db = new DataContext())
+                {
+                    db.Role.Update(input);
                     db.SaveChanges();
                 }
                 return true;

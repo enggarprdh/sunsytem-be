@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using _5unSystem.Model.Shared;
 using _5unSystem.Model.DTO;
 using _5unSystem.Core.BussinessLogic;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace _5unSystem.API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase

@@ -59,12 +59,11 @@ public class AuthLogic
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenKey = Encoding.ASCII.GetBytes(key);
+        var claims = new List<Claim>();
+        claims.Add(new Claim("userName", response.UserName));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, response.UserName)
-            }),
+            Subject = new ClaimsIdentity(claims),
             Expires = expires,
             Audience = audience,
             Issuer = issuer,
@@ -92,7 +91,6 @@ public class AuthLogic
         var token = tokenHandler.CreateToken(tokenDescriptor);
         response.RefreshToken = tokenHandler.WriteToken(token);
     }
-
     private static void GetMenu(Guid roleID, LoginResponse loginResult)
     {
         loginResult.Menu = AuthDataAccess.GetMenu(roleID);

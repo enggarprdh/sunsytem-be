@@ -10,7 +10,7 @@ namespace _5unSystem.API.Controllers
 {
     [Route("api/role")]
     [ApiController]
-    [Authorize] // Tambahkan atribut Authorize untuk mengaktifkan JWT Authorization
+    [Authorize]
     public class RoleController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -45,14 +45,34 @@ namespace _5unSystem.API.Controllers
             }
         }
 
-        [HttpDelete("{roleID}")]
-        public ActionResult DeleteRole(Guid roleID)
+        [HttpGet("{roleId}")]
+        public ActionResult GetRoleById(Guid roleId)
         {
             try
             {
-                if (roleID == Guid.Empty)
+                if (roleId == Guid.Empty)
+                    throw new ArgumentException(RoleResponseMessage.ROLE_INVALID_DATA);
+                var response = RoleLogic.GetRoleById(roleId);
+                
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var result = new Result<string>
+                {
+                    Message = ex.Message
+                };
+                return BadRequest(result);
+            }
+        }
+        [HttpDelete("{roleId}")]
+        public ActionResult DeleteRole(Guid roleId)
+        {
+            try
+            {
+                if (roleId == Guid.Empty)
                     throw new ArgumentException("Role ID cannot be empty");
-                var isDeleted = RoleLogic.DeleteRole(roleID);
+                var isDeleted = RoleLogic.DeleteRole(roleId);
                 if (!isDeleted)
                     throw new Exception("Failed to delete role");
                 return Ok(new Result<string> { Message = "Role deleted successfully" });
@@ -66,14 +86,35 @@ namespace _5unSystem.API.Controllers
                 return BadRequest(result);
             }
         }
-
         [HttpPost]
-        public ActionResult AddRole([FromBody] RoleRequest input)
+        public ActionResult AddRole([FromBody] RoleCreateOrUpdateRequest input)
         {
             try
             {
+
                 RoleLogic.AddRole(input);
                 return Ok(new Result<string> { Message = RoleResponseMessage.ROLE_CREATED_SUCCESSFULLY });
+            }
+            catch (Exception ex)
+            {
+                var result = new Result<string>
+                {
+                    Message = ex.Message
+                };
+                return BadRequest(result);
+            }
+        }
+        [HttpPut("{roleId}")]
+        public ActionResult UpdateRole(Guid roleId, [FromBody] RoleCreateOrUpdateRequest input)
+        {
+            try
+            {
+                if (input == null || roleId == Guid.Empty)
+                    throw new ArgumentException(RoleResponseMessage.ROLE_INVALID_DATA);
+
+                RoleLogic.UpdateRole(roleId, input);
+
+                return Ok(new Result<string> { Message = RoleResponseMessage.ROLE_UPDATED_SUCCESSFULLY });
             }
             catch (Exception ex)
             {

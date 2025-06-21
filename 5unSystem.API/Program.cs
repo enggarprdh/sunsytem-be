@@ -6,6 +6,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddHttpContextAccessor();
 // Add services to the container.
 
 // JWT Authentication configuration
@@ -49,6 +50,9 @@ var app = builder.Build();
 
 var generatorDB = new GeneratorDB();
 generatorDB.EnsureDatabaseCreated();
+
+var httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
+_5unSystem.Utility.UserClaimHelper.Configure(httpContextAccessor);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
