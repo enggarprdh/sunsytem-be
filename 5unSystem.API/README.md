@@ -28,7 +28,8 @@
 - **menu.json**: Dynamic menu file seeded to the database on first run.
 
 ## Project Flow Diagram
-flowchart TD
+```mermaid
+flowchart TD;
     A["Startup: Program.cs"] --> B["Register Services (DbContext, JWT, CORS, Swagger)"]
     B --> C["Run GeneratorDB.EnsureDatabaseCreated()"]
     C --> D["Create Database & Tables"]
@@ -39,6 +40,7 @@ flowchart TD
     H --> I["Auth: /api/auth/login"]
     H --> J["Role Management: /api/role"]
     H --> K["Dynamic Menu"]
+```
 ## Project Flow
 
 1. **Startup**: On application start, `Program.cs`:
